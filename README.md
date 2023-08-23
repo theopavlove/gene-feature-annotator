@@ -6,9 +6,7 @@ This is a Docker container for a gene feature annotator tool. The container will
 
 ```sh
 git clone https://github.com/theopavlove/gene-feature-annotator.git
-
 cd gene-feature-annotator
-
 docker build -t gene-feature-annotator .
 ```
 
@@ -17,11 +15,11 @@ docker build -t gene-feature-annotator .
 ### From shell
 
 ```sh
-docker run -v /path/to/data/:/data \
+docker run -v /absolute/path/to/data/:/data \
     gene-feature-annotator \
-    /data/input/input.bed \
-    /data/input/input.gtf \
-    /data/output/output.tsv
+    -g /data/input/input.gtf.gz \
+    -i /data/input/input1.bed,/data/input/input2.bed,... \
+    -o /data/output/
 ```
 
 ### From Python
@@ -39,37 +37,39 @@ client.containers.run("gene-feature-annotator", "sleep infinity", detach=True)
 
 The resulting table contains the following columns:
 
-- `geneID` -- Gene ID.
-- `seqnames` -- Peak chromosome / sequence name.
-- `start` -- Peak Start coordinate.
-- `end` -- Peak End coordinate.
-- `width` -- Peak length.
-- `strand` -- Peak strand.
-- `V4`, `V5`... -- Remaining columns from the initial bed-file.
-- `annotation` -- Annotation type for the given peak.
-- `geneChr` -- Gene chromosome.
-- `geneStart` -- Gene Start coordinate.
-- `geneEnd` -- Gene End coordinate.
-- `geneLength` -- Gene length.
-- `geneStrand` -- Gene strand.
-- `transcriptId` -- Transcript ID.
-- `distanceToTSS` -- Distance from the peak to the TSS of the associated gene.
-- `gene_name` -- Gene name column from the `.gtf` file. 
-- `gene_type` -- Gene type column from the `.gtf` file.
+- `geneID` — Gene ID.
+- `seqnames` — Peak chromosome / sequence name.
+- `start` — Peak Start coordinate.
+- `end` — Peak End coordinate.
+- `width` — Peak length.
+- `strand` — Peak strand.
+- `V4`, `V5`... — Remaining columns from the initial bed-file.
+- `annotation` — Annotation type for the given peak.
+- `geneChr` — Gene chromosome.
+- `geneStart` — Gene Start coordinate.
+- `geneEnd` — Gene End coordinate.
+- `geneLength` — Gene length.
+- `geneStrand` — Gene strand.
+- `transcriptId` — Transcript ID.
+- `distanceToTSS` — Distance from the peak to the TSS of the associated gene.
+- `gene_name` — Gene name column from the `.gtf` file. 
+- `gene_type` — Gene type column from the `.gtf` file.
 
 ## Example
 
 ```sh
 docker run -v $(pwd)/data:/data \
     gene-feature-annotator \
-    /data/input/mm10.Z-DNA.bed \
-    /data/input/mm10.gencode.basic.annotation.gtf.gz \
-    /data/output/mm10.Z-DNA.annotation.tsv
+    -g /data/input/mm10.gencode.basic.annotation.gtf.gz \
+    -i /data/input/mm10.Z-DNA.bed,/data/input/mm10.G4.bed \
+    -o /data/output/
 ```
 
 ## Future plans
 
-- [ ] Add support for multiple bed files input
+- [x] Add support for multiple bed files input
 - [ ] Add support for .bed.gz input
 - [ ] Add support for .tsv.gz output
-- [ ] Speed up the program (if possible)
+- [ ] Optimize docker container size
+- [ ] Parallelize for multiple bed inputs
+- [ ] Move to docker-compose
